@@ -115,6 +115,8 @@
 	"config.specialities.miningSpeedMaxBonus.tooltip": "Extra block-breaking speed at mining level 100, as a fraction. 1.0 = +100% (x2.0).",
 	"config.specialities.luckLevelsPerBonus": "Levels per +1 Fortune/Looting",
 	"config.specialities.luckLevelsPerBonus.tooltip": "Skill levels required for each +1 passive Fortune/Looting. Lower = luck comes faster. Default 20.",
+	"config.specialities.maxLevel": "Max Skill Level",
+	"config.specialities.maxLevel.tooltip": "Highest level any skill can reach. Every level-scaled bonus stretches to fit, so raising this makes for a longer climb rather than dead levels past 100. Default 100, max 999.",
 	"config.specialities.xpRateMultiplier": "Global XP rate multiplier",
 	"config.specialities.xpRateMultiplier.tooltip": "Multiplier on all skill XP gains. 1.0 = normal, 2.0 = double, 0.0 = disabled.",
 	"config.specialities.showXpHudBar": "Show the skill XP bar",

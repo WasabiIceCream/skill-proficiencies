@@ -46,6 +46,15 @@ public final class SpecialitiesConfig {
 	public int luckLevelsPerBonus = 20;
 
 	/**
+	 * Highest level any skill can reach. Vanilla default 100; raise this for a
+	 * longer progression curve. Every level-scaled bonus in {@link com.specialities.skills.Tuning}
+	 * (damage, mining speed, sweeping, milestones, etc.) scales against this value,
+	 * not a fixed 100, so raising it stretches the same curve out further rather
+	 * than letting levels past 100 do nothing.
+	 */
+	public int maxLevel = 100;
+
+	/**
 	 * Draw the skill XP bar above the hotbar. {@code false} hides the bar and, with it, the
 	 * {@code HUD_SHIFT} raise of the vanilla bottom HUD; toasts, the skills screen and the
 	 * stealth vignette are unaffected.
@@ -97,6 +106,7 @@ public final class SpecialitiesConfig {
 		miningSpeedMaxBonus = clamp(miningSpeedMaxBonus, 0.0, 10.0);
 		xpRateMultiplier = clamp(xpRateMultiplier, 0.0, 100.0);
 		luckLevelsPerBonus = (int) clamp(luckLevelsPerBonus, 1, 100);
+		maxLevel = (int) clamp(maxLevel, 1, 999);
 		hudShiftAmount = (int) clamp(hudShiftAmount, 0, 32);
 		hudBarYOffset = (int) clamp(hudBarYOffset, -64, 64);
 	}

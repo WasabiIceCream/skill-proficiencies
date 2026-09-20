@@ -392,7 +392,7 @@ public class SkillsScreen extends Screen {
 
 		int intoLevel = skills.totalXp(skill) - Tuning.totalXpForLevel(level);
 		int needed = Tuning.xpToNext(level);
-		float progress = level >= Tuning.MAX_LEVEL ? 1.0F : Math.min(1.0F, intoLevel / (float) needed);
+		float progress = level >= Tuning.maxLevel() ? 1.0F : Math.min(1.0F, intoLevel / (float) needed);
 		int fill = (int) ((barRight - barLeft - 2) * progress);
 
 		if (fill > 0) {
@@ -532,7 +532,7 @@ public class SkillsScreen extends Screen {
 		List<Component> lines = new ArrayList<>();
 		lines.add(skill.displayName().copy().append(" — ").append(Component.translatable("screen.specialities.skills.level", level)));
 
-		if (level >= Tuning.MAX_LEVEL) {
+		if (level >= Tuning.maxLevel()) {
 			lines.add(Component.translatable("screen.specialities.skills.max"));
 		} else {
 			int intoLevel = skills.totalXp(skill) - Tuning.totalXpForLevel(level);
@@ -577,7 +577,7 @@ public class SkillsScreen extends Screen {
 				lines.add(Component.translatable("tooltip.specialities.attack_recovery", recovery));
 				lines.add(Component.translatable("tooltip.specialities.sweeping", sweeping));
 
-				if (level < Tuning.MAX_LEVEL) {
+				if (level < Tuning.maxLevel()) {
 					lines.add(Component.translatable("tooltip.specialities.next_sweep", (sweeping + 1) * Tuning.SWEEP_BREAKPOINT));
 				}
 			}
@@ -637,7 +637,7 @@ public class SkillsScreen extends Screen {
 			case MINING, WOODCUTTING, HARVESTING, EXCAVATION, COMBAT, FISHING -> true;
 			default -> false;
 		};
-		if (usesLuck && level < Tuning.MAX_LEVEL && luck < Tuning.MAX_LEVEL / Tuning.luckBreakpoint()) {
+		if (usesLuck && level < Tuning.maxLevel() && luck < Tuning.maxLevel() / Tuning.luckBreakpoint()) {
 			lines.add(Component.translatable("tooltip.specialities.next_luck", (luck + 1) * Tuning.luckBreakpoint()));
 		}
 

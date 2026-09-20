@@ -289,7 +289,7 @@ public final class SkillXpHudBar {
 	}
 
 	private static float progressWithin(final int totalXp, final int level) {
-		if (level >= Tuning.MAX_LEVEL) {
+		if (level >= Tuning.maxLevel()) {
 			return 1.0F;
 		}
 

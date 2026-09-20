@@ -4,11 +4,10 @@ import com.specialities.config.ConfigManager;
 
 /**
  * All balance knobs in one place. A handful of them (combat damage, attack
- * speed, mining speed, luck breakpoint, XP rate) are player-editable and read
- * from {@link ConfigManager}; the rest are compile-time constants.
+ * speed, mining speed, luck breakpoint, XP rate, max level) are player-editable
+ * and read from {@link ConfigManager}; the rest are compile-time constants.
  */
 public final class Tuning {
-	public static final int MAX_LEVEL = 100;
 	/** Combat XP per point of damage dealt. */
 	public static final float COMBAT_XP_PER_DAMAGE = 2.0F;
 	/** Every N arms mastery levels grant +1 passive sweeping edge. */
@@ -25,12 +24,22 @@ public final class Tuning {
 	}
 
 	/**
+	 * Highest level any skill can reach, player-configurable (default 100, max
+	 * 999). Was a hardcoded constant; every formula below already scales against
+	 * this value rather than a literal 100, so raising it stretches the same
+	 * curve out further instead of leaving levels past 100 with nothing to give.
+	 */
+	public static int maxLevel() {
+		return ConfigManager.get().maxLevel;
+	}
+
+	/**
 	 * Multiplier for attack recovery time (arms mastery) and bow/crossbow draw
 	 * time (archery): 1.0 at level 0, down to (1 - attackSpeedMaxReduction) at
 	 * level 100 (default 0.7, i.e. ~1.4x faster; 1.2.0 used 0.5 / 2x faster).
 	 */
 	public static float recoveryTimeMultiplier(final int level) {
-		return (float) (1.0 - ConfigManager.get().attackSpeedMaxReduction * level / MAX_LEVEL);
+		return (float) (1.0 - ConfigManager.get().attackSpeedMaxReduction * level / maxLevel());
 	}
 
 	/** Passive sweeping edge levels from arms mastery. */
@@ -40,7 +49,7 @@ public final class Tuning {
 
 	/** Two-step milestone bonus: +1 at level 50, +2 at level 100. */
 	public static int milestoneTier(final int level) {
-		if (level >= MAX_LEVEL) {
+		if (level >= maxLevel()) {
 			return 2;
 		}
 
@@ -120,7 +129,7 @@ public final class Tuning {
 	/** Multiplier applied to the player's visibility while sneaking (lower = harder to detect). */
 	public static float sneakVisibilityMultiplier(final int level, final int heavyArmorPieces) {
 		float armorFactor = Math.max(0.0F, 1.0F - HEAVY_ARMOR_PENALTY * heavyArmorPieces);
-		return 1.0F - SNEAK_MAX_DETECTION_REDUCTION * (level / (float) MAX_LEVEL) * armorFactor;
+		return 1.0F - SNEAK_MAX_DETECTION_REDUCTION * (level / (float) maxLevel()) * armorFactor;
 	}
 
 	/**
@@ -152,20 +161,20 @@ public final class Tuning {
 	 * third, and so on.
 	 */
 	public static float smithingReturnChance(final int level, final int nthItem) {
-		return (level / (float) MAX_LEVEL) / (1 << (nthItem - 1));
+		return (level / (float) maxLevel()) / (1 << (nthItem - 1));
 	}
 
 	/** Smelting multicraft: chances (at the given level) for x8 / x4 / x2 output. */
 	public static float smeltChanceX8(final int level) {
-		return 0.05F * level / MAX_LEVEL;
+		return 0.05F * level / maxLevel();
 	}
 
 	public static float smeltChanceX4(final int level) {
-		return 0.10F * level / MAX_LEVEL;
+		return 0.10F * level / maxLevel();
 	}
 
 	public static float smeltChanceX2(final int level) {
-		return 0.25F * level / MAX_LEVEL;
+		return 0.25F * level / maxLevel();
 	}
 
 	// --- Alchemy ---
@@ -174,7 +183,7 @@ public final class Tuning {
 
 	/** Chance the brewing ingredient is not consumed: up to 50% at level 100. */
 	public static float alchemyReturnChance(final int level) {
-		return 0.5F * level / MAX_LEVEL;
+		return 0.5F * level / maxLevel();
 	}
 
 	// --- Enchanting ---
@@ -183,29 +192,29 @@ public final class Tuning {
 
 	/** Chance an enchant costs ~50% less XP levels: 100% at level 100. */
 	public static float enchantDiscountChance(final int level) {
-		return level / (float) MAX_LEVEL;
+		return level / (float) maxLevel();
 	}
 
 	/** Chance for a free enchantment upgrade/addition: capped at 50% at level 100. */
 	public static float enchantLuckChance(final int level) {
-		return 0.5F * level / MAX_LEVEL;
+		return 0.5F * level / maxLevel();
 	}
 
 	/** XP needed to go from {@code level} to {@code level + 1}. */
 	public static int xpToNext(final int level) {
-		return level >= MAX_LEVEL ? 0 : 50 + 15 * level;
+		return level >= maxLevel() ? 0 : 50 + 15 * level;
 	}
 
 	/** Total accumulated XP required to reach {@code level}. */
 	public static int totalXpForLevel(final int level) {
-		int clamped = Math.min(level, MAX_LEVEL);
+		int clamped = Math.min(level, maxLevel());
 		// sum of (50 + 15*i) for i in [0, clamped)
 		return 50 * clamped + 15 * clamped * (clamped - 1) / 2;
 	}
 
 	public static int levelForTotalXp(final int totalXp) {
 		int level = 0;
-		while (level < MAX_LEVEL && totalXp >= totalXpForLevel(level + 1)) {
+		while (level < maxLevel() && totalXp >= totalXpForLevel(level + 1)) {
 			level++;
 		}
 		return level;
@@ -213,7 +222,7 @@ public final class Tuning {
 
 	/** Block breaking speed multiplier: +miningSpeedMaxBonus at level 100 (default +100%, x2.0). */
 	public static float breakSpeedMultiplier(final int level) {
-		return (float) (1.0 + ConfigManager.get().miningSpeedMaxBonus * level / MAX_LEVEL);
+		return (float) (1.0 + ConfigManager.get().miningSpeedMaxBonus * level / maxLevel());
 	}
 
 	/** Skill levels required per +1 passive Fortune/Looting (player-configurable). */
@@ -228,6 +237,6 @@ public final class Tuning {
 
 	/** Weapon damage multiplier: +0% at level 0, +combatDamageMaxBonus at level 100 (default +50%, x1.5; 1.2.0 was x2.0). */
 	public static float damageMultiplier(final int level) {
-		return (float) (1.0 + ConfigManager.get().combatDamageMaxBonus * level / MAX_LEVEL);
+		return (float) (1.0 + ConfigManager.get().combatDamageMaxBonus * level / maxLevel());
 	}
 }

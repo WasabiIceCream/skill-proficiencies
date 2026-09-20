@@ -108,16 +108,16 @@ public final class SkillCommands {
 				.then(Commands.literal("set")
 						.then(Commands.argument("skill", StringArgumentType.word())
 								.suggests(SKILL_SUGGESTIONS)
-								.then(Commands.argument("level", IntegerArgumentType.integer(0, Tuning.MAX_LEVEL))
+								.then(Commands.argument("level", IntegerArgumentType.integer(0, Tuning.maxLevel()))
 										.executes(context -> setLevel(context, self(context)))
 										.then(Commands.argument("targets", EntityArgument.players())
 												.executes(context -> setLevel(context,
 														EntityArgument.getPlayers(context, "targets")))))))
 				.then(Commands.literal("max")
-						.executes(context -> setAll(context, self(context), Tuning.MAX_LEVEL))
+						.executes(context -> setAll(context, self(context), Tuning.maxLevel()))
 						.then(Commands.argument("targets", EntityArgument.players())
 								.executes(context -> setAll(context, EntityArgument.getPlayers(context, "targets"),
-										Tuning.MAX_LEVEL))))
+										Tuning.maxLevel()))))
 				.then(Commands.literal("reset")
 						.executes(context -> setAll(context, self(context), 0))
 						.then(Commands.argument("targets", EntityArgument.players())
@@ -147,7 +147,7 @@ public final class SkillCommands {
 		return targets.size();
 	}
 
-	/** Backs both {@code max} (level = {@link Tuning#MAX_LEVEL}) and {@code reset} (level = 0). */
+	/** Backs both {@code max} (level = {@link Tuning#maxLevel()}) and {@code reset} (level = 0). */
 	private static int setAll(final CommandContext<CommandSourceStack> context, final Collection<ServerPlayer> targets,
 			final int level) {
 		for (ServerPlayer player : targets) {

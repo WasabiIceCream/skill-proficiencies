@@ -59,6 +59,12 @@ public final class ClothConfigScreen {
 				.setTooltip(Component.translatable("config.specialities.luckLevelsPerBonus.tooltip"))
 				.setSaveConsumer(v -> config.luckLevelsPerBonus = v)
 				.build());
+		skills.addEntry(eb.startIntField(Component.translatable("config.specialities.maxLevel"), config.maxLevel)
+				.setDefaultValue(100)
+				.setMin(1).setMax(999)
+				.setTooltip(Component.translatable("config.specialities.maxLevel.tooltip"))
+				.setSaveConsumer(v -> config.maxLevel = v)
+				.build());
 
 		ConfigCategory general = builder.getOrCreateCategory(Component.translatable("config.specialities.category.general"));
 		general.addEntry(eb.startDoubleField(Component.translatable("config.specialities.xpRateMultiplier"), config.xpRateMultiplier)
