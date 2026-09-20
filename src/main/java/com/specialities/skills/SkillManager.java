@@ -25,13 +25,21 @@ public final class SkillManager {
 		}
 
 		// Global XP-rate knob (config): 1.0 = normal, 0.0 = disabled.
-		int scaled = (int) Math.round(amount * ConfigManager.get().xpRateMultiplier);
-		if (scaled <= 0) {
+		double multiplier = ConfigManager.get().xpRateMultiplier;
+		if (multiplier <= 0.0) {
 			return;
+		}
+		int scaled = (int) Math.round(amount * multiplier);
+		if (scaled <= 0) {
+			// A very low but nonzero rate can round a small gain down to 0 (e.g. 1 XP
+			// at a 0.05x rate). The multiplier being positive means XP gain is meant
+			// to be enabled, just slow -- guarantee at least 1 so it never silently
+			// grants nothing instead.
+			scaled = 1;
 		}
 
 		PlayerSkills old = get(player);
-		int cap = Tuning.totalXpForLevel(Tuning.MAX_LEVEL);
+		int cap = Tuning.totalXpForLevel(Tuning.maxLevel());
 		int newTotal = Math.min(cap, old.totalXp(skill) + scaled);
 
 		if (newTotal == old.totalXp(skill)) {
@@ -44,7 +52,7 @@ public final class SkillManager {
 	/** Used by knowledge books: jump ahead a number of levels (progress resets to the level start). */
 	public static void addLevels(final ServerPlayer player, final SkillType skill, final int levels) {
 		PlayerSkills old = get(player);
-		int newLevel = Math.min(Tuning.MAX_LEVEL, old.level(skill) + levels);
+		int newLevel = Math.min(Tuning.maxLevel(), old.level(skill) + levels);
 		int newTotal = Tuning.totalXpForLevel(newLevel);
 
 		if (newTotal <= old.totalXp(skill)) {
@@ -66,9 +74,9 @@ public final class SkillManager {
 		// `Math.clamp` is a Java 21 method and 1.20.1 is the Java 17 node (conventions
 		// §5e). Same value, same clamp order, one `invokestatic` more.
 		//? if >=1.20.5 {
-		int newTotal = Tuning.totalXpForLevel(Math.clamp(level, 0, Tuning.MAX_LEVEL));
+		int newTotal = Tuning.totalXpForLevel(Math.clamp(level, 0, Tuning.maxLevel()));
 		//?} else {
-		/*int newTotal = Tuning.totalXpForLevel(Math.max(0, Math.min(Tuning.MAX_LEVEL, level)));
+		/*int newTotal = Tuning.totalXpForLevel(Math.max(0, Math.min(Tuning.maxLevel(), level)));
 		*///?}
 
 		if (newTotal == old.totalXp(skill)) {
