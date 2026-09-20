@@ -25,9 +25,17 @@ public final class SkillManager {
 		}
 
 		// Global XP-rate knob (config): 1.0 = normal, 0.0 = disabled.
-		int scaled = (int) Math.round(amount * ConfigManager.get().xpRateMultiplier);
-		if (scaled <= 0) {
+		double multiplier = ConfigManager.get().xpRateMultiplier;
+		if (multiplier <= 0.0) {
 			return;
+		}
+		int scaled = (int) Math.round(amount * multiplier);
+		if (scaled <= 0) {
+			// A very low but nonzero rate can round a small gain down to 0 (e.g. 1 XP
+			// at a 0.05x rate). The multiplier being positive means XP gain is meant
+			// to be enabled, just slow -- guarantee at least 1 so it never silently
+			// grants nothing instead.
+			scaled = 1;
 		}
 
 		PlayerSkills old = get(player);
