@@ -27,14 +27,15 @@ node specifically since that's this server's actual target (`BUILD
 SUCCESSFUL`, `specialities-1.6.3+26.1.2.jar`). Boot-tested clean alongside
 the re-enabled Chopt and Crackt fixes.
 
-**Real balance consequence, not just a number going up**: every level-scaled
+**Mechanism worth knowing, not currently a live concern**: every level-scaled
 bonus (damage, mining speed, sweeping, milestones, luck, etc.) is computed as
-a fraction of the current max level. Raising the cap from 100 to 999 means an
-existing player's bonuses at their *current* level drop sharply until they
-grind further (e.g. level 60 used to be 60% of the way to max; it's now
-~6%). No player's stored level or XP is reduced, but everyone's effective
-power level drops the moment this ships. Deliberate, per an explicit request
-from the user — flagging it here so it isn't mistaken for a bug later.
+a fraction of the current max level, so raising the cap stretches the same
+curve out rather than adding a new tier past the old one. No players have
+actually played on the server yet, so there's no existing progress this
+affects right now — but if the cap is ever raised again after real players
+have real levels, the same fraction-of-cap scaling would reduce everyone's
+effective bonuses at their current level until they grind further. Worth
+remembering before doing that later, not a concern for this change.
 
 **If upstream ever ships either fix**, diff against the real release first
 (`SkillManager.java` for the XP fix, `Tuning.java` + `SpecialitiesConfig.java`
