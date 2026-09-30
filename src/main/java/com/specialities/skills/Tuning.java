@@ -15,6 +15,11 @@ import com.specialities.config.ConfigManager;
  * that stop making physical sense past 100, and each one is clamped right
  * here, in the formula, with the level where it binds written next to it. At
  * or below level 100 every clamp is inert, so the standard game is unchanged.
+ *
+ * <p><b>Gameoverse fork:</b> the continuous bonuses (combat damage, mining speed, attack/draw time, sneak detection,
+ * the chance-based effects) are written against {@link #maxLevel()} instead, so they reach their level-100 values at
+ * the configured cap: a longer climb to the same maximum, as this fork did before upstream's extended levels.
+ * Per-step bonuses (sweeping, milestones, toughness, luck) keep stepping; Defence's hearts are capped at level 100.
  */
 public final class Tuning {
 	/**
@@ -68,7 +73,7 @@ public final class Tuning {
 	 */
 	public static float recoveryTimeMultiplier(final int level) {
 		return (float) Math.max(MIN_TIME_MULTIPLIER,
-				1.0 - ConfigManager.get().attackSpeedMaxReduction * level / MAX_LEVEL);
+				1.0 - ConfigManager.get().attackSpeedMaxReduction * level / maxLevel());
 	}
 
 	/** Passive sweeping edge levels from arms mastery. */
@@ -139,9 +144,14 @@ public final class Tuning {
 		return level / 25;
 	}
 
-	/** +1 heart (2 max health) per 10 levels. */
+	/**
+	 * +1 heart (2 max health) per 10 levels.
+	 *
+	 * <p>Gameoverse: capped at the level-100 value (+10 hearts). Max health is the Heart Crystal progression on this
+	 * server (it drives mob levels and loot), so Defence can't keep adding hearts past it.
+	 */
 	public static int maxHealthBonus(final int level) {
-		return 2 * (level / 10);
+		return 2 * (Math.min(level, MAX_LEVEL) / 10);
 	}
 
 	// --- Acrobatics ---
@@ -206,7 +216,7 @@ public final class Tuning {
 	public static float sneakVisibilityMultiplier(final int level, final int heavyArmorPieces) {
 		float armorFactor = Math.max(0.0F, 1.0F - HEAVY_ARMOR_PENALTY * heavyArmorPieces);
 		return Math.max(MIN_SNEAK_VISIBILITY,
-				1.0F - SNEAK_MAX_DETECTION_REDUCTION * (level / (float) MAX_LEVEL) * armorFactor);
+				1.0F - SNEAK_MAX_DETECTION_REDUCTION * (level / (float) maxLevel()) * armorFactor);
 	}
 
 	/**
@@ -244,7 +254,7 @@ public final class Tuning {
 	 * {@link #maxSmithingReturns}.
 	 */
 	public static float smithingReturnChance(final int level, final int nthItem) {
-		return Math.min(1.0F, (level / (float) MAX_LEVEL) / (1 << (nthItem - 1)));
+		return Math.min(1.0F, (level / (float) maxLevel()) / (1 << (nthItem - 1)));
 	}
 
 	/**
@@ -272,15 +282,15 @@ public final class Tuning {
 	 * (x4 would at 1000 and x8 at 2000, both beyond the 999 hard cap).
 	 */
 	public static float smeltChanceX8(final int level) {
-		return Math.min(1.0F, 0.05F * level / MAX_LEVEL);
+		return Math.min(1.0F, 0.05F * level / maxLevel());
 	}
 
 	public static float smeltChanceX4(final int level) {
-		return Math.min(1.0F, 0.10F * level / MAX_LEVEL);
+		return Math.min(1.0F, 0.10F * level / maxLevel());
 	}
 
 	public static float smeltChanceX2(final int level) {
-		return Math.min(1.0F, 0.25F * level / MAX_LEVEL);
+		return Math.min(1.0F, 0.25F * level / maxLevel());
 	}
 
 	/**
@@ -313,7 +323,7 @@ public final class Tuning {
 	 * ingredient is ever consumed).
 	 */
 	public static float alchemyReturnChance(final int level) {
-		return Math.min(1.0F, 0.5F * level / MAX_LEVEL);
+		return Math.min(1.0F, 0.5F * level / maxLevel());
 	}
 
 	// --- Enchanting ---
@@ -327,7 +337,7 @@ public final class Tuning {
 	 * 100, so this bonus does not grow past it (the discount SIZE is fixed).
 	 */
 	public static float enchantDiscountChance(final int level) {
-		return Math.min(1.0F, level / (float) MAX_LEVEL);
+		return Math.min(1.0F, level / (float) maxLevel());
 	}
 
 	/**
@@ -336,7 +346,7 @@ public final class Tuning {
 	 * <p>CLAMP: a probability, capped at 100%; binds at level 200.
 	 */
 	public static float enchantLuckChance(final int level) {
-		return Math.min(1.0F, 0.5F * level / MAX_LEVEL);
+		return Math.min(1.0F, 0.5F * level / maxLevel());
 	}
 
 	/** XP needed to go from {@code level} to {@code level + 1}; 0 at the effective cap. */
@@ -383,7 +393,7 @@ public final class Tuning {
 
 	/** Block breaking speed multiplier: +miningSpeedMaxBonus at level 100 (default +100%, x2.0). */
 	public static float breakSpeedMultiplier(final int level) {
-		return (float) (1.0 + ConfigManager.get().miningSpeedMaxBonus * level / MAX_LEVEL);
+		return (float) (1.0 + ConfigManager.get().miningSpeedMaxBonus * level / maxLevel());
 	}
 
 	/** Skill levels required per +1 passive Fortune/Looting (player-configurable). */
@@ -398,6 +408,6 @@ public final class Tuning {
 
 	/** Weapon damage multiplier: +0% at level 0, +combatDamageMaxBonus at level 100 (default +50%, x1.5; 1.2.0 was x2.0). */
 	public static float damageMultiplier(final int level) {
-		return (float) (1.0 + ConfigManager.get().combatDamageMaxBonus * level / MAX_LEVEL);
+		return (float) (1.0 + ConfigManager.get().combatDamageMaxBonus * level / maxLevel());
 	}
 }
