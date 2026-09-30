@@ -9,7 +9,11 @@ Upstream 1.6.4 ships its own extended level cap (GitHub #6: `extendedLevels` + `
 to 999), so our `maxLevel` change is dropped; this server's config now sets `extendedLevels: true`,
 `extendedMaxLevel: 999` (the old `maxLevel` key removed). Levels are stored as total XP either way, so nothing migrates.
 Still carried: the XP-rounding fix (`SkillManager.addXp`: with `xpRateMultiplier: 0.25`, a 1 XP gain rounded to 0),
-cherry-picked onto upstream's new cap logic. Built from the `26.1-fabric` node; deployed as
+cherry-picked onto upstream's new cap logic. Also carried (the user's call): upstream's extended levels keep every
+formula growing past 100 (+~500% damage, +~1000% mining speed at 999); ours writes the 11 continuous bonuses against
+the configured cap instead, so they reach their level-100 values at 999 as this fork did before. Per-step bonuses keep
+stepping, except Defence's hearts, capped at +10 (level 100): max health is the Heart Crystal progression here, and
+drives mob levels and loot. Built from the `26.1-fabric` node; deployed as
 `specialities-1.6.4+26.1.2-gameoverse.jar`. The old `main` branch (1.6.3 + both fixes) is kept as history.
 
 ## 2026-09-20 — XP-rounding fix and configurable max level
